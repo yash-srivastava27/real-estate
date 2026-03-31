@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser'
 
 //import cookieParser from "cookie-parser";
 dotenv.config();
+console.log(process.env.MONGO);
 mongoose.connect(process.env.MONGO).then(()=>{
     console.log("connected");
 })
@@ -24,7 +25,7 @@ app.use(cookieParser());
 app.use(express.json())
 app.use(express.urlencoded({extended: true, limit: "20mb"}))
 app.use(express.static("backend/public"))
-app.listen(5001, ()=>{
+app.listen(5002, ()=>{
     console.log('server is running on port 5000!!')
 })
 app.use('/api/auth',authRouter)

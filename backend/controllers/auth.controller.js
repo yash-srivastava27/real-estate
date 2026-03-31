@@ -4,7 +4,7 @@ import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken"
 //import { uploadOnCloudinary } from "../cloudinary.js";
 import dotenv from "dotenv";
-import { sendVerificationCode } from "../middlewares/Email.js";
+//import { sendVerificationCode } from "../middlewares/Email.js";
 dotenv.config();
 
 
@@ -21,7 +21,7 @@ export const signup=async(req,res,next)=>{
     // }
     try{
      await newUser.save();
-     sendVerificationCode(newUser.email,verificationCode);
+     //sendVerificationCode(newUser.email,verificationCode);
      res.status(201).json('user created successfuly')
     } catch(error){
         console.log('sign up error: ',error)
@@ -92,19 +92,19 @@ export const signOut=async(req,res,next)=>{
         next(error);
     }
 };
-export const verifyemail=async(req,res)=>{
-    try {
-        const {code}=req.body;
-        const user=await User.findOne({
-            verificationCode:code
-        })
-        if(!user){
-            return res.status(400).json({success:false,message:"invalid code"});
-        }
-        user.isverified=true;
-        user.verificationCode=undefined;
-        await user.save();
-    } catch (error) {
-        console.log(error);
-    }
-}
+// export const verifyemail=async(req,res)=>{
+//     try {
+//         const {code}=req.body;
+//         const user=await User.findOne({
+//             verificationCode:code
+//         })
+//         if(!user){
+//             return res.status(400).json({success:false,message:"invalid code"});
+//         }
+//        // user.isverified=true;
+//        // user.verificationCode=undefined;
+//         await user.save();
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
