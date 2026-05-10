@@ -52,28 +52,35 @@ function CreateListing() {
       setUploading(false);
     }
   };
-  const storeImage=async(file)=>{
-    return new Promise((resolve,reject)=>{
-      const uploadImage = async (file) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        //console.log(formData);
-        formData.append("upload_preset", "images_preset"); // Configure in Cloudinary settings
-        //console.log(formData)
-        const response = await fetch(
-          `https://api.cloudinary.com/v1_1/dne8fofeo/image/upload`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-        const data= await response.json();
-        const url=data.url;
-        resolve(url);
+  const storeImage = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "upload_preset",
+      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+    );
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
       }
-      uploadImage(file);
-    });
+    );
+
+    const data = await response.json();
+
+    if (data.secure_url) {
+      return data.secure_url; // ✅ best practice
+    } else {
+      throw new Error("Upload failed");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
+};
   const handleRemoveImage=(index)=>{
     setformData({
       ...formData,
