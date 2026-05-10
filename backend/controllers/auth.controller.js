@@ -15,10 +15,6 @@ export const signup=async(req,res,next)=>{
     const newUser = new User({username,email,password:hashedPassword,verificationCode});
 
     console.log(req.file);
-    // if(req.file){
-    //     const uploadResult=await uploadOnCloudinary(req.file.path);
-    //     console.log(uploadResult)
-    // }
     try{
      await newUser.save();
      //sendVerificationCode(newUser.email,verificationCode);
@@ -92,19 +88,4 @@ export const signOut=async(req,res,next)=>{
         next(error);
     }
 };
-// export const verifyemail=async(req,res)=>{
-//     try {
-//         const {code}=req.body;
-//         const user=await User.findOne({
-//             verificationCode:code
-//         })
-//         if(!user){
-//             return res.status(400).json({success:false,message:"invalid code"});
-//         }
-//        // user.isverified=true;
-//        // user.verificationCode=undefined;
-//         await user.save();
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
+
