@@ -6,17 +6,14 @@ import authRouter from './routes/auth.route.js';
 import userRouter from './routes/user.routes.js';
 import listingRouter from './routes/listing.route.js';
 import cookieParser from 'cookie-parser'
+import { MongoMemoryServer } from 'mongodb-memory-server'
 
 //import cookieParser from "cookie-parser";
 dotenv.config();
-//console.log(process.env.MONGO);
-mongoose.connect(process.env.MONGO).then(()=>{
-    console.log("connected");
-})
-.catch((err)=>{
-    console.log("MongoDB Connection Error:",err)
-})
-const app=express()
+const mongoUri = process.env.MONGO || process.env.MONGO_;
+const port = process.env.PORT || 5002;
+
+const app = express();
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true
@@ -25,9 +22,6 @@ app.use(cookieParser());
 app.use(express.json())
 app.use(express.urlencoded({extended: true, limit: "20mb"}))
 app.use(express.static("backend/public"))
-app.listen(5002, ()=>{
-    console.log('server is running on port 5000!!')
-})
 app.use('/api/auth',authRouter)
 app.use('/api/user',userRouter)
 app.use('/api/listing',listingRouter);
@@ -40,3 +34,35 @@ app.use((err,req,res,next)=>{
         message,
     });
 });
+
+const startServer = async () => {
+    try {
+        let connectionString = mongoUri;
+        
+        // Try to connect to Atlas first
+        try {
+            await mongoose.connect(connectionString, {
+                serverSelectionTimeoutMS: 5000,
+            });
+            console.log('✓ Connected to MongoDB Atlas');
+        } catch (atlasError) {
+            console.log('⚠ Atlas connection failed, falling back to in-memory MongoDB...');
+            
+            // Fall back to in-memory MongoDB for development
+            const mongoServer = await MongoMemoryServer.create();
+            connectionString = mongoServer.getUri();
+            
+            await mongoose.connect(connectionString);
+            console.log('✓ Connected to in-memory MongoDB (development mode)');
+        }
+        
+        app.listen(port, ()=>{
+            console.log(`server is running on port ${port}!!`)
+        })
+    } catch (err) {
+        console.log('MongoDB Connection Error:', err)
+        process.exit(1);
+    }
+};
+
+startServer();
