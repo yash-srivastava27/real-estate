@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { updateUser } from "../../../../backend/controllers/user.controller";
 
 const initialState={
     currentUser:null,
@@ -43,7 +42,7 @@ const userSlice=createSlice({
             state.error=null;
         },
         deleteUserFailure:(state,action)=>{
-            state.error=error;
+            state.error=action.payload;
             state.loading=false;
         },
         signOutUserStart: (state) => {

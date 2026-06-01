@@ -7,7 +7,6 @@ import SignUp from './pages/SignUp'
 import Profile from './pages/Profile'
 import About from './pages/About'
 import PrivateRoute from './components/PrivateRoute'
-import { createListing } from '../../backend/controllers/listing.controller'
 import CreateListing from './pages/CreateListing'
 import UpdateListing from './pages/UpdateListing'
 import Listing from './pages/Listing';
