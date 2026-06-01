@@ -3,6 +3,7 @@ import { main } from '@cloudinary/url-gen/qualifiers/videoCodecProfile'
 import React, { useRef, useState } from 'react'
 import {useSelector} from 'react-redux'
 import { useNavigate } from 'react-router-dom';
+import { uploadMultipleImagesToCloudinary } from '../utils/cloudinary';
 
 function CreateListing() {
   const [files,setFiles]=useState([]);
@@ -27,60 +28,32 @@ function CreateListing() {
   const [uploading,setUploading]=useState(false);
   const [loading,setLoading]=useState(false);
   console.log(formData);
-  const handleImageSubmit=(e)=>{
-    if(files.length>0&& files.length+formData.imageUrls.length<7){
+
+  const handleImageSubmit = async (e) => {
+    if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
       setUploading(true);
       setImageUploadError(false);
-      const promises=[];
-      for (let i = 0; i < files.length; i++) {
-        promises.push(storeImage(files[i]));
-      }
-      for (let i = 0;i < promises.length;i++) {
-        console.log(promises[i]);        
-      }
-      Promise.all(promises).then((urls)=>{
-        setformData({...formData,imageUrls:formData.imageUrls.concat(urls)});
+      try {
+        const urls = await uploadMultipleImagesToCloudinary(files, {
+          folder: 'real-estate-listings',
+        });
+        setformData({
+          ...formData,
+          imageUrls: formData.imageUrls.concat(urls),
+        });
         setImageUploadError(false);
+        setFiles([]);
+      } catch (err) {
+        setImageUploadError(err.message || 'Image upload failed');
+      } finally {
         setUploading(false);
-      }).catch((err)=>{
-        setImageUploadError('Image upload failed ');
-        setUploading(false);
-      });
-    }
-    else{
+      }
+    } else {
       setImageUploadError('You can only upload 6 images per listing');
       setUploading(false);
     }
   };
-  const storeImage = async (file) => {
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append(
-      "upload_preset",
-      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
-    );
 
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await response.json();
-
-    if (data.secure_url) {
-      return data.secure_url; // ✅ best practice
-    } else {
-      throw new Error("Upload failed");
-    }
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
   const handleRemoveImage=(index)=>{
     setformData({
       ...formData,
