@@ -10,15 +10,24 @@ dotenv.config();
 
 export const signup=async(req,res,next)=>{
     const {username,email,password}=req.body;
-    const hashedPassword=bcryptjs.hashSync(password,10);
-    const verificationCode=Math.floor(100000+Math.random()*900000).toString();
-    const newUser = new User({username,email,password:hashedPassword,verificationCode});
-
-    console.log(req.file);
     try{
+      if(!username || !email || !password){
+          return next(errorHandler(400,'all fields are required'));
+      }
+      const existingUser = await User.findOne({
+          $or: [{ email }, { username }]
+      });
+      if(existingUser){
+          return next(errorHandler(409,'user already exists!'));
+      }
+      const hashedPassword=bcryptjs.hashSync(password,10);
+      const verificationCode=Math.floor(100000+Math.random()*900000).toString();
+      const newUser = new User({username,email,password:hashedPassword,verificationCode});
+
+      console.log(req.file);
      await newUser.save();
      //sendVerificationCode(newUser.email,verificationCode);
-     res.status(201).json('user created successfuly')
+      res.status(201).json({success:true,message:'user created successfully'})
     } catch(error){
         console.log('sign up error: ',error)
         next(error);
