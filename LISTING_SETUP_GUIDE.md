@@ -6,10 +6,12 @@ This setup includes complete integration for managing real estate listings with 
 ## Cloudinary Configuration
 
 ### Credentials
-- **Cloud Name**: difjotugk
-- **API Key**: 639734316234361
-- **API Secret**: hMnwyblIiekkvkBlk2QVfkc_fKE
-- **Upload Preset**: real-estate
+- **Cloud Name**: `<your_cloud_name>`
+- **API Key**: `<your_api_key>`
+- **API Secret**: `<your_api_secret>`
+- **Upload Preset**: `<your_unsigned_upload_preset>`
+
+> ⚠️ Never commit real credentials. Rotate any keys or secrets that were previously exposed.
 
 ### Files Updated
 
@@ -88,22 +90,27 @@ Updated to use the new Cloudinary utility:
 
 ### Frontend (`.env`)
 ```
-VITE_FIREBASE_API_KEY=AIzaSyAETPT7dUX7F78X1X8zs0iHLuMKRlmjxJA
-VITE_CLOUDINARY_CLOUD_NAME=difjotugk
-VITE_CLOUDINARY_API_KEY=639734316234361
-VITE_CLOUDINARY_API_SECRET=hMnwyblIiekkvkBlk2QVfkc_fKE
-VITE_CLOUDINARY_UPLOAD_PRESET=real-estate
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+VITE_CLOUDINARY_UPLOAD_PRESET=your_unsigned_upload_preset
 BASE_URL=http://localhost:5173
 ```
 
 ### Backend (`.env`)
 ```
-MONGO_=mongodb+srv://ratnasri0783_db_user:sgCuZQcWdfEtsUsr@estatecluster.bp1xqbj.mongodb.net/?appName=estatecluster
-JWT_SECRET='hi_this_is_yash'
-CLOUDINARY_CLOUD_NAME=difjotugk
-CLOUDINARY_API_KEY=639734316234361
-CLOUDINARY_API_SECRET=hMnwyblIiekkvkBlk2QVfkc_fKE
+MONGO=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<database>
+JWT_SECRET=replace_with_a_long_random_secret
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+CORS_ORIGIN=http://localhost:5173
+PORT=5002
 ```
+
+### Required Variables (Quick Reference)
+
+- Frontend required: `VITE_FIREBASE_API_KEY`, `VITE_CLOUDINARY_CLOUD_NAME`, `VITE_CLOUDINARY_UPLOAD_PRESET`
+- Backend required: `MONGO`, `JWT_SECRET`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
 
 ## Listing Data Model
 
