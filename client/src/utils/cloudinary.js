@@ -1,9 +1,16 @@
 // Cloudinary Configuration
 export const CLOUDINARY_CONFIG = {
-  CLOUD_NAME: 'difjotugk', // Default from env
-  API_KEY: '639734316234361',
-  API_SECRET: 'hMnwyblIiekkvkBlk2QVfkc_fKE',
+  CLOUD_NAME: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
   UPLOAD_PRESET: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'real-estate',
+};
+
+const validateCloudinaryConfig = () => {
+  if (!CLOUDINARY_CONFIG.CLOUD_NAME) {
+    throw new Error('Missing VITE_CLOUDINARY_CLOUD_NAME');
+  }
+  if (!CLOUDINARY_CONFIG.UPLOAD_PRESET) {
+    throw new Error('Missing VITE_CLOUDINARY_UPLOAD_PRESET');
+  }
 };
 
 /**
@@ -14,6 +21,7 @@ export const CLOUDINARY_CONFIG = {
  */
 export const uploadImageToCloudinary = async (file, options = {}) => {
   try {
+    validateCloudinaryConfig();
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', CLOUDINARY_CONFIG.UPLOAD_PRESET);
@@ -27,7 +35,7 @@ export const uploadImageToCloudinary = async (file, options = {}) => {
     }
 
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.CLOUD_NAME}/image/upload`,
       {
         method: 'POST',
         body: formData,
@@ -106,6 +114,7 @@ export const deleteImageFromCloudinary = async (publicId) => {
  */
 export const getOptimizedImageUrl = (imageUrl, transformations = {}) => {
   if (!imageUrl) return '';
+  if (!CLOUDINARY_CONFIG.CLOUD_NAME) return imageUrl;
   
   // Extract public ID from URL
   const urlParts = imageUrl.split('/');
@@ -128,7 +137,7 @@ export const getOptimizedImageUrl = (imageUrl, transformations = {}) => {
     .map(([key, value]) => `${key}_${value}`)
     .join(',');
 
-  return `https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/${transformString}/${publicId}.jpg`;
+  return `https://res.cloudinary.com/${CLOUDINARY_CONFIG.CLOUD_NAME}/image/upload/${transformString}/${publicId}.jpg`;
 };
 
 export default {
