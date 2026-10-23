@@ -76,7 +76,7 @@
 1. **Clone Repo**
 
    ```bash
-   git clone https://github.com/kushalgupta1906/real-state.git
+   git clone https://github.com/yashsrivastava/real-estate.git
    cd real-state
    ```
 2. **Install Dependencies**
